@@ -12,7 +12,9 @@ services:
     ports:
       - "5433:5432"
   keycloak:
-    image: quay.io/keycloak/keycloak:21.1
+    build:
+      context: ./keycloak
+      dockerfile: Dockerfile
     environment:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
@@ -20,7 +22,13 @@ services:
       KC_DB_URL: jdbc:postgresql://keycloak_db:5432/keycloak_db
       KC_DB_USERNAME: keycloak_user
       KC_DB_PASSWORD: keycloak_password
-    command: 
+      # Issuer в токенах всегда публичный адрес, серверные запросы идут на keycloak:8080.
+      KC_HOSTNAME_URL: http://localhost:8080
+      KC_HOSTNAME_STRICT_BACKCHANNEL: "false"
+      # Подставляются в realm-export.json при импорте, значения берутся из .env.
+      YANDEX_CLIENT_ID: ${YANDEX_CLIENT_ID:-not-configured}
+      YANDEX_CLIENT_SECRET: ${YANDEX_CLIENT_SECRET:-not-configured}
+    command:
       - start-dev
       - --import-realm
     volumes:
@@ -29,14 +37,55 @@ services:
       - "8080:8080"
     depends_on:
       - keycloak_db
+      - openldap
+  openldap:
+    image: osixia/openldap:1.5.0
+    container_name: openldap
+    command: --copy-service
+    volumes:
+      - ./ldap/config.ldif:/container/service/slapd/assets/config/bootstrap/ldif/50-bootstrap.ldif
+    environment:
+      - LDAP_ORGANISATION=example-com
+      - LDAP_DOMAIN=example.com
+      - LDAP_ADMIN_PASSWORD=admin
+    ports:
+      - "389:389"
+      - "636:636"
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+  bionicpro-auth:
+    build:
+      context: ./bionicpro-auth
+      dockerfile: Dockerfile
+    environment:
+      KEYCLOAK_PUBLIC_URL: http://localhost:8080
+      KEYCLOAK_INTERNAL_URL: http://keycloak:8080
+      KEYCLOAK_REALM: reports-realm
+      OIDC_CLIENT_ID: bionicpro-auth
+      OIDC_CLIENT_SECRET: QN_a9asNOBMMter7blNIbIplfafJNfsu
+      OIDC_REDIRECT_URI: http://localhost:3000/auth/callback
+      OIDC_SCOPE: openid profile email
+      FRONTEND_URL: http://localhost:3000
+      REDIS_URL: redis://redis:6379/0
+      TOKEN_ENCRYPTION_KEY: ${TOKEN_ENCRYPTION_KEY:-}
+      SESSION_COOKIE_NAME: bionicpro_session
+      SESSION_COOKIE_SAMESITE: lax
+      SESSION_TTL_SECONDS: "1800"
+      SESSION_ROTATION_GRACE_SECONDS: "5"
+      ACCESS_TOKEN_REFRESH_MARGIN_SECONDS: "10"
+      LOGIN_STATE_TTL_SECONDS: "300"
+      REPORTS_API_URL: http://reports-api:8000
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+      - keycloak
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
-    environment:
-      REACT_APP_API_URL: http://localhost:8000
-      REACT_APP_KEYCLOAK_URL: http://localhost:8080
-      REACT_APP_KEYCLOAK_REALM: reports-realm
-      REACT_APP_KEYCLOAK_CLIENT_ID: reports-frontend
+    depends_on:
+      - bionicpro-auth
