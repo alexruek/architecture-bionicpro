@@ -1,0 +1,225 @@
+<mxfile host="Electron" type="device">
+  <diagram id="bionicpro-c4-security" name="C4 Containers - Security">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1760" pageHeight="1240" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" parent="1" vertex="1" value="&lt;font style=&quot;font-size: 20px&quot;&gt;BionicPRO. Диаграмма контейнеров: управление учетными данными&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size: 12px&quot;&gt;Вход через Keycloak с PKCE и OTP, токены только на сервере bionicpro-auth, учетные записи представительств в каталоге своей страны&lt;/font&gt;" style="text;html=1;align=left;verticalAlign=top;whiteSpace=wrap;fontColor=#333333;">
+          <mxGeometry x="40" y="10" width="1200" height="60" as="geometry" />
+        </mxCell>
+        <object id="b-ru" label="&lt;font style=&quot;font-size: 13px&quot;&gt;BionicPRO&lt;/font&gt;&lt;br&gt;[Программная система, контур в России]" c4Type="Boundary">
+          <mxCell style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;dashed=1;dashPattern=8 4;arcSize=3;fillColor=none;strokeColor=#666666;fontColor=#333333;labelBackgroundColor=none;align=left;verticalAlign=bottom;spacing=10;connectable=0;" vertex="1" parent="1">
+            <mxGeometry x="40" y="330" width="1240" height="560" as="geometry" />
+          </mxCell>
+        </object>
+        <object id="b-branch" label="&lt;font style=&quot;font-size: 13px&quot;&gt;Представительство BionicPRO&lt;/font&gt;&lt;br&gt;[Контур в стране представительства]" c4Type="Boundary">
+          <mxCell style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;dashed=1;dashPattern=8 4;arcSize=3;fillColor=none;strokeColor=#666666;fontColor=#333333;labelBackgroundColor=none;align=left;verticalAlign=bottom;spacing=10;connectable=0;" vertex="1" parent="1">
+            <mxGeometry x="1340" y="330" width="380" height="230" as="geometry" />
+          </mxCell>
+        </object>
+        <object id="person" label="&lt;font style=&quot;font-size: 14px&quot;&gt;Пользователь&lt;/font&gt;&lt;br&gt;[Пользователь]&lt;br&gt;&lt;br&gt;&lt;font style=&quot;font-size: 10px&quot;&gt;Пилот протеза в России или в стране представительства&lt;/font&gt;" c4Type="Person">
+          <mxCell style="shape=mxgraph.c4.person2;html=1;whiteSpace=wrap;fontSize=11;labelBackgroundColor=none;fillColor=#083F75;fontColor=#ffffff;align=center;strokeColor=#06315C;" vertex="1" parent="1">
+            <mxGeometry x="550" y="90" width="200" height="180" as="geometry" />
+          </mxCell>
+        </object>
+        <object id="frontend" label="&lt;font style=&quot;font-size: 14px&quot;&gt;Веб-приложение отчетов&lt;/font&gt;&lt;br&gt;[Контейнер: React, Nginx]&lt;br&gt;&lt;br&gt;&lt;font style=&quot;font-size: 10px&quot;&gt;SPA без токенов. Запросы /auth и /api на тот же origin, браузер прикладывает cookie сессии&lt;/font&gt;" c4Type="Container" c4Status="changed">
+          <mxCell style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;labelBackgroundColor=none;fillColor=#23A2D9;fontColor=#ffffff;align=center;arcSize=6;strokeColor=#0E7DAD;strokeColor=#F59F00;strokeWidth=3;" vertex="1" parent="1">
+            <mxGeometry x="80" y="380" width="260" height="150" as="geometry" />
+          </mxCell>
+        </object>
+        <object id="auth" label="&lt;font style=&quot;font-size: 14px&quot;&gt;bionicpro-auth&lt;/font&gt;&lt;br&gt;[Контейнер: Python, FastAPI]&lt;br&gt;&lt;br&gt;&lt;font style=&quot;font-size: 10px&quot;&gt;Authorization Code + PKCE, хранение токенов, сессия с ротацией id, обновление access_token, прокси к API&lt;/font&gt;" c4Type="Container" c4Status="new">
+          <mxCell style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;labelBackgroundColor=none;fillColor=#23A2D9;fontColor=#ffffff;align=center;arcSize=6;strokeColor=#0E7DAD;strokeColor=#E8590C;strokeWidth=3;" vertex="1" parent="1">
+            <mxGeometry x="520" y="380" width="260" height="150" as="geometry" />
+          </mxCell>
+        </object>
+        <object id="keycloak" label="&lt;font style=&quot;font-size: 14px&quot;&gt;Keycloak&lt;/font&gt;&lt;br&gt;[Контейнер: Keycloak 21]&lt;br&gt;&lt;br&gt;&lt;font style=&quot;font-size: 10px&quot;&gt;Единая точка входа и брокер IdP: PKCE S256, обязательный OTP, согласие, LDAP-федерация, роли&lt;/font&gt;" c4Type="Container" c4Status="changed">
+          <mxCell style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;labelBackgroundColor=none;fillColor=#23A2D9;fontColor=#ffffff;align=center;arcSize=6;strokeColor=#0E7DAD;strokeColor=#F59F00;strokeWidth=3;" vertex="1" parent="1">
+            <mxGeometry x="960" y="380" width="260" height="150" as="geometry" />
+          </mxCell>
+        </object>
+        <object id="reports" label="&lt;font style=&quot;font-size: 14px&quot;&gt;Reports API&lt;/font&gt;&lt;br&gt;[Контейнер: Бэкенд, задание 2]&lt;br&gt;&lt;br&gt;&lt;font style=&quot;font-size: 10px&quot;&gt;Принимает только запросы с access_token, проверяет подпись по JWKS&lt;/font&gt;" c4Type="Container">
+          <mxCell style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;labelBackgroundColor=none;fillColor=#23A2D9;fontColor=#ffffff;align=center;arcSize=6;strokeColor=#0E7DAD;" vertex="1" parent="1">
+            <mxGeometry x="80" y="640" width="260" height="140" as="geometry" />
+          </mxCell>
+        </object>
+        <object id="redis" label="&lt;font style=&quot;font-size: 14px&quot;&gt;Хранилище сессий&lt;/font&gt;&lt;br&gt;[Контейнер: Redis]&lt;br&gt;&lt;br&gt;&lt;font style=&quot;font-size: 10px&quot;&gt;Сессии по хешу id, зашифрованные access_token и refresh_token, TTL&lt;/font&gt;" c4Type="Database" c4Status="new">
+          <mxCell style="shape=cylinder3;size=14;boundedLbl=1;whiteSpace=wrap;html=1;fontSize=11;labelBackgroundColor=none;fillColor=#23A2D9;fontColor=#ffffff;align=center;strokeColor=#0E7DAD;strokeColor=#E8590C;strokeWidth=3;" vertex="1" parent="1">
+            <mxGeometry x="520" y="640" width="260" height="140" as="geometry" />
+          </mxCell>
+        </object>
+        <object id="kcdb" label="&lt;font style=&quot;font-size: 14px&quot;&gt;БД Keycloak&lt;/font&gt;&lt;br&gt;[Контейнер: PostgreSQL]&lt;br&gt;&lt;br&gt;&lt;font style=&quot;font-size: 10px&quot;&gt;Настройки realm, локальные учетные записи, OTP-секреты. ПДн представительств не хранит&lt;/font&gt;" c4Type="Database">
+          <mxCell style="shape=cylinder3;size=14;boundedLbl=1;whiteSpace=wrap;html=1;fontSize=11;labelBackgroundColor=none;fillColor=#23A2D9;fontColor=#ffffff;align=center;strokeColor=#0E7DAD;" vertex="1" parent="1">
+            <mxGeometry x="960" y="640" width="260" height="140" as="geometry" />
+          </mxCell>
+        </object>
+        <object id="ldap" label="&lt;font style=&quot;font-size: 14px&quot;&gt;Каталог представительства&lt;/font&gt;&lt;br&gt;[Контейнер: OpenLDAP]&lt;br&gt;&lt;br&gt;&lt;font style=&quot;font-size: 10px&quot;&gt;Учетные записи и группы ролей. ПДн хранятся в стране представительства&lt;/font&gt;" c4Type="Database" c4Status="new">
+          <mxCell style="shape=cylinder3;size=14;boundedLbl=1;whiteSpace=wrap;html=1;fontSize=11;labelBackgroundColor=none;fillColor=#23A2D9;fontColor=#ffffff;align=center;strokeColor=#0E7DAD;strokeColor=#E8590C;strokeWidth=3;" vertex="1" parent="1">
+            <mxGeometry x="1400" y="370" width="260" height="150" as="geometry" />
+          </mxCell>
+        </object>
+        <object id="yandex" label="&lt;font style=&quot;font-size: 14px&quot;&gt;Яндекс ID&lt;/font&gt;&lt;br&gt;[Внешняя система: OAuth 2.0]&lt;br&gt;&lt;br&gt;&lt;font style=&quot;font-size: 10px&quot;&gt;Аутентификация и профиль пользователя&lt;/font&gt;" c4Type="External" c4Status="new">
+          <mxCell style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;labelBackgroundColor=none;fillColor=#8C8496;fontColor=#ffffff;align=center;arcSize=6;strokeColor=#736782;strokeColor=#E8590C;strokeWidth=3;" vertex="1" parent="1">
+            <mxGeometry x="1400" y="620" width="260" height="120" as="geometry" />
+          </mxCell>
+        </object>
+        <object id="national" label="&lt;font style=&quot;font-size: 14px&quot;&gt;IdP других стран&lt;/font&gt;&lt;br&gt;[Внешняя система: OIDC, SAML 2.0]&lt;br&gt;&lt;br&gt;&lt;font style=&quot;font-size: 10px&quot;&gt;Государственные и национальные удостоверяющие службы&lt;/font&gt;" c4Type="External" c4Status="new">
+          <mxCell style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;labelBackgroundColor=none;fillColor=#8C8496;fontColor=#ffffff;align=center;arcSize=6;strokeColor=#736782;strokeColor=#E8590C;strokeWidth=3;" vertex="1" parent="1">
+            <mxGeometry x="1400" y="790" width="260" height="120" as="geometry" />
+          </mxCell>
+        </object>
+        <object id="e-person-frontend" label="Работает с отчетами&lt;br&gt;[HTTPS]" c4Kind="sync">
+          <mxCell style="endArrow=blockThin;endFill=1;endSize=12;html=1;fontSize=10;fontColor=#404040;strokeWidth=1;strokeColor=#828282;rounded=0;edgeStyle=orthogonalEdgeStyle;jumpStyle=arc;labelBackgroundColor=#ffffff;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="person" target="frontend">
+            <mxGeometry relative="1" as="geometry">
+              <Array as="points">
+                <mxPoint x="210" y="180" />
+              </Array>
+            </mxGeometry>
+          </mxCell>
+        </object>
+        <object id="e-person-keycloak" label="Вход: пароль, OTP, согласие, выбор Яндекс ID&lt;br&gt;[редирект браузера, HTTPS]" c4Kind="redirect">
+          <mxCell style="endArrow=blockThin;endFill=1;endSize=12;html=1;fontSize=10;fontColor=#404040;strokeWidth=1;strokeColor=#828282;rounded=0;edgeStyle=orthogonalEdgeStyle;jumpStyle=arc;labelBackgroundColor=#ffffff;dashed=1;dashPattern=8 4;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="person" target="keycloak">
+            <mxGeometry relative="1" as="geometry">
+              <Array as="points">
+                <mxPoint x="1090" y="180" />
+              </Array>
+            </mxGeometry>
+          </mxCell>
+        </object>
+        <object id="e-frontend-auth" label="/auth/*, /api/*&lt;br&gt;cookie HttpOnly, Secure&lt;br&gt;[HTTPS]" c4Kind="sync">
+          <mxCell style="endArrow=blockThin;endFill=1;endSize=12;html=1;fontSize=10;fontColor=#404040;strokeWidth=1;strokeColor=#828282;rounded=0;edgeStyle=orthogonalEdgeStyle;jumpStyle=arc;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="frontend" target="auth">
+            <mxGeometry relative="1" as="geometry" />
+          </mxCell>
+        </object>
+        <object id="e-auth-keycloak" label="code + code_verifier,&lt;br&gt;refresh, logout, JWKS&lt;br&gt;[HTTPS, client secret]" c4Kind="sync">
+          <mxCell style="endArrow=blockThin;endFill=1;endSize=12;html=1;fontSize=10;fontColor=#404040;strokeWidth=1;strokeColor=#828282;rounded=0;edgeStyle=orthogonalEdgeStyle;jumpStyle=arc;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="auth" target="keycloak">
+            <mxGeometry relative="1" as="geometry" />
+          </mxCell>
+        </object>
+        <object id="e-auth-redis" label="Сессии&lt;br&gt;[RESP]" c4Kind="sync">
+          <mxCell style="endArrow=blockThin;endFill=1;endSize=12;html=1;fontSize=10;fontColor=#404040;strokeWidth=1;strokeColor=#828282;rounded=0;edgeStyle=orthogonalEdgeStyle;jumpStyle=arc;labelBackgroundColor=#ffffff;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0.75;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="auth" target="redis">
+            <mxGeometry relative="1" as="geometry" />
+          </mxCell>
+        </object>
+        <object id="e-auth-reports" label="Запрос с access_token&lt;br&gt;[HTTPS, Bearer]" c4Kind="sync">
+          <mxCell style="endArrow=blockThin;endFill=1;endSize=12;html=1;fontSize=10;fontColor=#404040;strokeWidth=1;strokeColor=#828282;rounded=0;edgeStyle=orthogonalEdgeStyle;jumpStyle=arc;labelBackgroundColor=#ffffff;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="auth" target="reports">
+            <mxGeometry relative="1" as="geometry">
+              <Array as="points">
+                <mxPoint x="585" y="590" />
+                <mxPoint x="210" y="590" />
+              </Array>
+            </mxGeometry>
+          </mxCell>
+        </object>
+        <object id="e-reports-keycloak" label="Ключи подписи (JWKS)&lt;br&gt;[HTTPS]" c4Kind="sync">
+          <mxCell style="endArrow=blockThin;endFill=1;endSize=12;html=1;fontSize=10;fontColor=#404040;strokeWidth=1;strokeColor=#828282;rounded=0;edgeStyle=orthogonalEdgeStyle;jumpStyle=arc;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.25;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="reports" target="keycloak">
+            <mxGeometry relative="1" as="geometry">
+              <Array as="points">
+                <mxPoint x="210" y="850" />
+                <mxPoint x="880" y="850" />
+                <mxPoint x="880" y="580" />
+                <mxPoint x="1025" y="580" />
+              </Array>
+            </mxGeometry>
+          </mxCell>
+        </object>
+        <object id="e-keycloak-kcdb" label="[JDBC]" c4Kind="sync">
+          <mxCell style="endArrow=blockThin;endFill=1;endSize=12;html=1;fontSize=10;fontColor=#404040;strokeWidth=1;strokeColor=#828282;rounded=0;edgeStyle=orthogonalEdgeStyle;jumpStyle=arc;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="keycloak" target="kcdb">
+            <mxGeometry relative="1" as="geometry" />
+          </mxCell>
+        </object>
+        <object id="e-keycloak-ldap" label="Проверка пароля, атрибуты и группы&lt;br&gt;по запросу, без импорта&lt;br&gt;[LDAPS]" c4Kind="sync">
+          <mxCell style="endArrow=blockThin;endFill=1;endSize=12;html=1;fontSize=10;fontColor=#404040;strokeWidth=1;strokeColor=#828282;rounded=0;edgeStyle=orthogonalEdgeStyle;jumpStyle=arc;labelBackgroundColor=#ffffff;exitX=1;exitY=0.3;exitDx=0;exitDy=0;entryX=0;entryY=0.43;entryDx=0;entryDy=0;" edge="1" parent="1" source="keycloak" target="ldap">
+            <mxGeometry relative="1" as="geometry" />
+          </mxCell>
+        </object>
+        <object id="e-keycloak-yandex" label="Identity Brokering:&lt;br&gt;code, профиль&lt;br&gt;[OAuth 2.0, HTTPS]" c4Kind="sync">
+          <mxCell style="endArrow=blockThin;endFill=1;endSize=12;html=1;fontSize=10;fontColor=#404040;strokeWidth=1;strokeColor=#828282;rounded=0;edgeStyle=orthogonalEdgeStyle;jumpStyle=arc;labelBackgroundColor=#ffffff;exitX=1;exitY=0.65;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="keycloak" target="yandex">
+            <mxGeometry relative="1" as="geometry">
+              <Array as="points">
+                <mxPoint x="1320" y="477" />
+                <mxPoint x="1320" y="680" />
+              </Array>
+            </mxGeometry>
+          </mxCell>
+        </object>
+        <object id="e-keycloak-national" label="Identity Brokering&lt;br&gt;[OIDC, SAML 2.0]" c4Kind="sync">
+          <mxCell style="endArrow=blockThin;endFill=1;endSize=12;html=1;fontSize=10;fontColor=#404040;strokeWidth=1;strokeColor=#828282;rounded=0;edgeStyle=orthogonalEdgeStyle;jumpStyle=arc;labelBackgroundColor=#ffffff;exitX=1;exitY=0.9;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="keycloak" target="national">
+            <mxGeometry relative="1" as="geometry">
+              <Array as="points">
+                <mxPoint x="1300" y="515" />
+                <mxPoint x="1300" y="850" />
+              </Array>
+            </mxGeometry>
+          </mxCell>
+        </object>
+        <mxCell id="legend" parent="1" vertex="1" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#B3B3B3;">
+          <mxGeometry x="40" y="950" width="1680" height="250" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-title" parent="1" vertex="1" value="Легенда" style="text;html=1;align=left;verticalAlign=middle;fontSize=14;fontColor=#333333;">
+          <mxGeometry x="60" y="960" width="200" height="30" as="geometry" />
+        </mxCell>
+        <object id="lg-person" label="Пользователь" c4Type="Person" legend="1">
+          <mxCell style="shape=mxgraph.c4.person2;html=1;whiteSpace=wrap;fontSize=11;labelBackgroundColor=none;fillColor=#083F75;fontColor=#ffffff;align=center;strokeColor=#06315C;" vertex="1" parent="1">
+            <mxGeometry x="60" y="1000" width="100" height="110" as="geometry" />
+          </mxCell>
+        </object>
+        <object id="lg-container" label="Контейнер" c4Type="Container" legend="1">
+          <mxCell style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;labelBackgroundColor=none;fillColor=#23A2D9;fontColor=#ffffff;align=center;arcSize=6;strokeColor=#0E7DAD;" vertex="1" parent="1">
+            <mxGeometry x="200" y="1010" width="160" height="70" as="geometry" />
+          </mxCell>
+        </object>
+        <object id="lg-database" label="Хранилище данных" c4Type="Database" legend="1">
+          <mxCell style="shape=cylinder3;size=14;boundedLbl=1;whiteSpace=wrap;html=1;fontSize=11;labelBackgroundColor=none;fillColor=#23A2D9;fontColor=#ffffff;align=center;strokeColor=#0E7DAD;" vertex="1" parent="1">
+            <mxGeometry x="400" y="1005" width="160" height="80" as="geometry" />
+          </mxCell>
+        </object>
+        <object id="lg-external" label="Внешняя система" c4Type="External" legend="1">
+          <mxCell style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;labelBackgroundColor=none;fillColor=#8C8496;fontColor=#ffffff;align=center;arcSize=6;strokeColor=#736782;" vertex="1" parent="1">
+            <mxGeometry x="600" y="1010" width="160" height="70" as="geometry" />
+          </mxCell>
+        </object>
+        <object id="lg-new" label="Новый элемент" c4Type="Container" c4Status="new" legend="1">
+          <mxCell style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;labelBackgroundColor=none;fillColor=#23A2D9;fontColor=#ffffff;align=center;arcSize=6;strokeColor=#0E7DAD;strokeColor=#E8590C;strokeWidth=3;" vertex="1" parent="1">
+            <mxGeometry x="800" y="1010" width="160" height="70" as="geometry" />
+          </mxCell>
+        </object>
+        <object id="lg-changed" label="Измененный элемент" c4Type="Container" c4Status="changed" legend="1">
+          <mxCell style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;labelBackgroundColor=none;fillColor=#23A2D9;fontColor=#ffffff;align=center;arcSize=6;strokeColor=#0E7DAD;strokeColor=#F59F00;strokeWidth=3;" vertex="1" parent="1">
+            <mxGeometry x="1000" y="1010" width="160" height="70" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="lg-sync-src" parent="1" vertex="1" value="" style="point;html=1;fillColor=#828282;strokeColor=#828282;">
+          <mxGeometry x="1220" y="1030" width="1" height="1" as="geometry" />
+        </mxCell>
+        <mxCell id="lg-sync-dst" parent="1" vertex="1" value="" style="point;html=1;fillColor=#828282;strokeColor=#828282;">
+          <mxGeometry x="1360" y="1030" width="1" height="1" as="geometry" />
+        </mxCell>
+        <object id="lg-sync" label="" c4Kind="sync" legend="1">
+          <mxCell style="endArrow=blockThin;endFill=1;endSize=12;html=1;fontSize=10;fontColor=#404040;strokeWidth=1;strokeColor=#828282;rounded=0;edgeStyle=orthogonalEdgeStyle;jumpStyle=arc;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="lg-sync-src" target="lg-sync-dst">
+            <mxGeometry relative="1" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="lg-sync-text" parent="1" vertex="1" value="Синхронный вызов" style="text;html=1;align=left;verticalAlign=middle;fontSize=11;fontColor=#333333;">
+          <mxGeometry x="1380" y="1015" width="300" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="lg-redirect-src" parent="1" vertex="1" value="" style="point;html=1;fillColor=#828282;strokeColor=#828282;">
+          <mxGeometry x="1220" y="1090" width="1" height="1" as="geometry" />
+        </mxCell>
+        <mxCell id="lg-redirect-dst" parent="1" vertex="1" value="" style="point;html=1;fillColor=#828282;strokeColor=#828282;">
+          <mxGeometry x="1360" y="1090" width="1" height="1" as="geometry" />
+        </mxCell>
+        <object id="lg-redirect" label="" c4Kind="redirect" legend="1">
+          <mxCell style="endArrow=blockThin;endFill=1;endSize=12;html=1;fontSize=10;fontColor=#404040;strokeWidth=1;strokeColor=#828282;rounded=0;edgeStyle=orthogonalEdgeStyle;jumpStyle=arc;labelBackgroundColor=#ffffff;dashed=1;dashPattern=8 4;" edge="1" parent="1" source="lg-redirect-src" target="lg-redirect-dst">
+            <mxGeometry relative="1" as="geometry" />
+          </mxCell>
+        </object>
+        <mxCell id="lg-redirect-text" parent="1" vertex="1" value="Редирект браузера" style="text;html=1;align=left;verticalAlign=middle;fontSize=11;fontColor=#333333;">
+          <mxGeometry x="1380" y="1075" width="300" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-note" parent="1" vertex="1" value="Фронтенд не получает токены IdP. Все параметры токенов и сессий заданы в config/defaults.toml." style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontColor=#333333;">
+          <mxGeometry x="60" y="1140" width="1100" height="40" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
