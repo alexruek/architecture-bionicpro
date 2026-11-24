@@ -1,0 +1,56 @@
+# Параметры по умолчанию для локального стенда BionicPRO.
+# docker-compose.yaml, keycloak/realm-export.json и frontend/nginx.conf
+# содержат эти значения буквально, совпадение проверяют тесты в tests/.
+
+[keycloak]
+image = "quay.io/keycloak/keycloak:21.1"
+realm = "reports-realm"
+public_url = "http://localhost:8080"
+internal_url = "http://keycloak:8080"
+access_token_lifespan_seconds = 120
+sso_session_idle_timeout_seconds = 1800
+sso_session_max_lifespan_seconds = 36000
+revoke_refresh_token = false
+browser_flow = "browser-mfa"
+post_broker_login_flow = "post-broker-otp"
+
+[pkce]
+code_challenge_method = "S256"
+
+[otp]
+type = "totp"
+algorithm = "HmacSHA1"
+digits = 6
+period_seconds = 30
+
+[auth_client]
+client_id = "bionicpro-auth"
+redirect_uri = "http://localhost:3000/auth/callback"
+frontend_url = "http://localhost:3000"
+scope = "openid profile email"
+consent_required = true
+
+[session]
+cookie_name = "bionicpro_session"
+cookie_samesite = "lax"
+ttl_seconds = 1800
+rotation_grace_seconds = 5
+refresh_margin_seconds = 10
+login_state_ttl_seconds = 300
+
+[redis]
+url = "redis://redis:6379/0"
+
+[ldap]
+connection_url = "ldap://openldap:389"
+users_dn = "ou=People,dc=example,dc=com"
+groups_dn = "ou=Groups,dc=example,dc=com"
+bind_dn = "cn=admin,dc=example,dc=com"
+
+[yandex]
+alias = "yandex"
+default_scope = "login:info login:email"
+providers_version = "1.0.49"
+
+[reports_api]
+upstream_url = "http://reports-api:8000"
